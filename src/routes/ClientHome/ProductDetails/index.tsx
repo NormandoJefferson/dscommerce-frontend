@@ -14,6 +14,11 @@ export default function ProductDetails() {
   const params = useParams();
   const [product, setProduct] = useState<ProductDTO>();
   const navigate = useNavigate();
+
+  /**
+   * - useContext: Seta o estado global do carrinho. Usamos aqui
+   *   para somar itens no carrinho.
+   */
   const { setContextCartCount } = useContext(ContextCartCount);
 
   useEffect(() => {
@@ -28,6 +33,17 @@ export default function ProductDetails() {
       });
   }, []);
 
+  /**
+   * - Função: Chama o cartService, adiciona um produto na localStorage e 
+   *   navega para a página de carrinho.
+   * 
+   * - cartService: Adiciona um produto no carrinho.
+   * 
+   * - setContextCartCount: Atualiza o contexto global com a quantidade
+   *   de itens do carrinho.
+   * 
+   * - navigate: Navega para a página de cart.
+   */
   function handleBuyClick() {
     if (product) {
       cartService.addProducts(product);

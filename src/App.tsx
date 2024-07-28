@@ -7,9 +7,20 @@ import { useState } from "react";
 import { ContextCartCount } from "./utils/context-cart";
 
 function App() {
+
+  /**
+   * - useState: Armazena nosso contexto global da contagem do carrinho de compras.
+   * 
+   * - É parametrizado com o tipo number, que é o tipo que usamos.
+   */
   const [contextCartCount, setContextCartCount] = useState<number>(0);
 
   return (
+
+    /**
+     * - Envolvemos tudo com o nosso contexto global, agora podemos usar esse estado onde nós
+     *   quisermos.
+     */
     <ContextCartCount.Provider
       value={{ contextCartCount, setContextCartCount }}
     >

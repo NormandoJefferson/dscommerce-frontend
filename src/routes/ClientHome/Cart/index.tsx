@@ -7,8 +7,22 @@ import { ContextCartCount } from "../../../utils/context-cart";
 
 export default function Cart() {
   const [cart, setCart] = useState<OrderDTO>(cartService.getCart());
+
+  /**
+   * - useContext: Seta o estado global do carrinho.
+   */
   const { setContextCartCount } = useContext(ContextCartCount);
 
+  /**
+   * 
+   * - cartService.clearCart: Limpa o carrinho.
+   * 
+   * - const newCart: Guarda o carrinho nessa variável.
+   * 
+   * - setCart: Seta o carrinho.
+   * 
+   * - setContextCartCount: Seta o contexto global com a quantidade de itens do carrinho.
+   */
   function handleClearClick() {
     cartService.clearCart();
     const newCart = cartService.getCart();
@@ -21,6 +35,17 @@ export default function Cart() {
     setCart(cartService.getCart());
   }
 
+  /**
+   * 
+   * 
+   * - cartService.decreaseItem: Diminui a quantidade de itens do carrinho.
+   * 
+   * - const newCart: Guarda o carrinho nessa variável.
+   * 
+   * - setCart: Seta o carrinho.
+   * 
+   * - setContextCartCount: Seta o contexto global com a quantidade de itens do carrinho.
+   */
   function handleDecreaseItem(productId: number) {
     cartService.decreaseItem(productId);
     const newCart = cartService.getCart();
