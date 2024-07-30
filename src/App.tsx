@@ -5,18 +5,17 @@ import Catalog from "./routes/ClientHome/Catalog";
 import Cart from "./routes/ClientHome/Cart";
 import { useState } from "react";
 import { ContextCartCount } from "./utils/context-cart";
+import Login from "./routes/ClientHome/Login";
 
 function App() {
-
   /**
    * - useState: Armazena nosso contexto global da contagem do carrinho de compras.
-   * 
+   *
    * - É parametrizado com o tipo number, que é o tipo que usamos.
    */
   const [contextCartCount, setContextCartCount] = useState<number>(0);
 
   return (
-
     /**
      * - Envolvemos tudo com o nosso contexto global, agora podemos usar esse estado onde nós
      *   quisermos.
@@ -35,6 +34,7 @@ function App() {
             />
             <Route path="*" element={<Navigate to="/" />} />
             <Route path="cart" element={<Cart />} />
+            <Route path="login" element={<Login />} />
           </Route>
         </Routes>
       </BrowserRouter>
