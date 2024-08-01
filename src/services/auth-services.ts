@@ -3,7 +3,7 @@ import { CredentialsDTO } from "../models/auth";
 import { CLIENT_ID, CLIENT_SECRET } from "../utils/system";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "../utils/requests";
-import * as accessTokenRepository from '../localStorage/access-token-repository'
+import * as accessTokenRepository from "../localStorage/access-token-repository";
 
 /**
  *- CredentialsDTO: É nosso tipo com username e password do usuário.
@@ -18,9 +18,9 @@ import * as accessTokenRepository from '../localStorage/access-token-repository'
  *     no formato x-www-form-urlencoded, para gerar esse formato
  *     apartir de um JSon vamos usar esse método da biblioteca
  *     que instalamos.
- * 
+ *
  * - config: É a nossa requisição do tipo AxiosRequestConfig.
- * 
+ *
  * - requestBackend: É a nossa função do requests.ts.
  */
 export function loginRequest(loginData: CredentialsDTO) {
@@ -57,4 +57,8 @@ export function logout() {
  */
 export function saveAccessToken(token: string) {
   accessTokenRepository.save(token);
+}
+
+export function getAccessToken() {
+  return accessTokenRepository.get();
 }
