@@ -4,9 +4,8 @@ import { UserDTO } from "../../../models/userDTO";
 import * as userService from "../../../services/user-service";
 
 export default function AdminHome() {
-
   /**
-   * - useState que salva o nome do nosso usuário logado para 
+   * - useState que salva o nome do nosso usuário logado para
    *   renderizar na tela de boas vindas.
    */
   const [user, setUser] = useState<UserDTO>();
@@ -15,14 +14,9 @@ export default function AdminHome() {
    * - findMe: busca o nome do usuário logado.
    */
   useEffect(() => {
-    userService
-      .findMe()
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    userService.findMe().then((response) => {
+      setUser(response.data);
+    });
   }, []);
 
   return (
