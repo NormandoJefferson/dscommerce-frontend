@@ -16,7 +16,7 @@ export default function Login() {
   /**
    * - loginRequest: É uma função que exportamos no auth-services
    *   . Chamamos essa função passando o formeData que digitamos no input.
-   * 
+   *
    * - authService.saveAccessToken: Salva nosso token no localStorage.
    */
   function handleSubmit(event: any) {
@@ -24,8 +24,8 @@ export default function Login() {
     authService
       .loginRequest(formData)
       .then((response) => {
-        authService.saveAccessToken(response.data.access_token)
-        console.log(response.data);
+        authService.saveAccessToken(response.data.access_token);
+        console.log(authService.getAccessTokenPayload());
       })
       .catch((error) => {
         console.log("Erro no login", error);
