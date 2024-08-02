@@ -8,8 +8,9 @@ import { ContextCartCount } from "./utils/context-cart";
 import Login from "./routes/ClientHome/Login";
 import Admin from "./routes/Admin";
 import AdminHome from "./routes/Admin/AdminHome";
-import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
-import {history} from './utils/history';
+import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
+import { history } from "./utils/history";
+import { PrivateRoute } from "./components/PrivateRoute";
 
 function App() {
   /**
@@ -23,7 +24,7 @@ function App() {
     /**
      * - Envolvemos tudo com o nosso contexto global, agora podemos usar esse estado onde nós
      *   quisermos.
-     * 
+     *
      * - HistoryRouter: Trocamos nosso browseRouter pele HistoryRouter que nos dá a possibilidade
      *   de fazer redirecionamentos inclusive de módulos que não forem componentes react.
      */
@@ -35,16 +36,16 @@ function App() {
           <Route path="/" element={<ClientHome />}>
             <Route index element={<Catalog />} />
             <Route path="catalog" element={<Catalog />} />
-            <Route path="product-details/:productId" element={<ProductDetails />}/>
+            <Route path="product-details/:productId"element={<ProductDetails />}/>
             <Route path="cart" element={<Cart />} />
             <Route path="login" element={<Login />} />
           </Route>
-          <Route path="/admin/" element={<Admin/>}>
-            <Route index element={<AdminHome/>} />
+          <Route path="/admin/"element={<PrivateRoute><Admin /></PrivateRoute>}>
+            <Route index element={<AdminHome />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-        </HistoryRouter>
+      </HistoryRouter>
     </ContextCartCount.Provider>
   );
 }
