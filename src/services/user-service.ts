@@ -1,15 +1,18 @@
 import { requestBackend } from "../utils/requests";
 import * as authService from "../services/auth-services";
+import { AxiosRequestConfig } from "axios";
 
 /**
- * - Faz um requisição para o backend em um endpoint que
+ * - url: Faz um requisição para o backend em um endpoint que
  *   nos traz os dados do usuário.
  *
- * - headers: É o formato Bearer + accessToken.
+ * - withCredentials: Devemos usar sempre que for uma requisição protejida.
  */
 export function findMe() {
-  const headers = {
-    Authorization: "Bearer " + authService.getAccessToken(),
+  const config: AxiosRequestConfig = {
+    url: "/users/me",
+    withCredentials: true,
   };
-  return requestBackend({ url: `/users/me`, headers: headers });
+
+  return requestBackend(config);
 }

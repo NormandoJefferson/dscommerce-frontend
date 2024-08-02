@@ -1,15 +1,26 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { BASE_URL } from "./system";
+import * as authService from "../services/auth-services";
 
 /**
- * - requestBackend: 
+ * - requestBackend:
  *   . Recebe AxiosRequestConfig.
- *   . Aroveita o que vem do config na desestruturação  
+ *   . Aroveita o que vem do config na desestruturação
  *   . Acrescenta o BASE_URL.
+ *
+ * - withCredentials: Se for verdadeiro vamos pegar os headers que já existem e
+ *   acrescentar nosso Authorization. Se não for true apenas mantemos os configs
+ *   que já existiam.
  * 
- * - Objetivo: Agora vamos chamar o requestBackend nos services, pois ele vai incluir
- *  nossa BASE_URL lá.
+ * - No return aproveitamos o que já veio, colocamos nossa BASE_URL e nossos headers.
  */
 export function requestBackend(config: AxiosRequestConfig) {
-  return axios({...config, baseURL:BASE_URL});
+  const headers = config.withCredentials
+    ? {
+        ...config.headers,
+        Authorization: "Bearer " + authService.getAccessToken(),
+      }
+    : config.headers;
+
+  return axios({ ...config, baseURL: BASE_URL, headers });
 }
