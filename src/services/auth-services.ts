@@ -91,11 +91,11 @@ export function getAccessTokenPayload(): AccessTokenPayloadDTO | undefined {
  *   está em milisegundos e o do jwt em segundos, por isso multiplicamos por 1000.
  *
  * - getAccessTokenPayload: salva o token no tokenPayLoad.
- * 
+ *
  * - Dentro do if tem 2 condições ligadas por um 'e'(&&), a primeira verifica se o token existe
- *   a segunda verifica se o tokenPayLoad.exp é maior que o tempo de agora, se for maior é 
+ *   a segunda verifica se o tokenPayLoad.exp é maior que o tempo de agora, se for maior é
  *   porque ainda está válido.
- * 
+ *
  * - Outra forma de escrever o if:
  *    return tokenPayload && tokenPayload.exp * 1000 > Date.now() ? true : false;
  */
@@ -103,6 +103,36 @@ export function isAuthenticated(): boolean {
   let tokenPayload = getAccessTokenPayload();
   if (tokenPayload && tokenPayload.exp * 1000 > Date.now()) {
     return true;
+  }
+  return false;
+}
+
+/**
+ * - roles: RoleEnum[]: Recebemos uma lista de roles como argumento.
+ * 
+ * - : boolean: O retorno será um boolean.
+ * 
+ * - O primeiro if verifica se a lista é vazia, se for retorna
+ *   verdadeiro.
+ * 
+ * - const tokenPayload: Pega o nosso token.
+ * 
+ * - Ser o tokenPayLoad existe vamos percorrer a lista que veio no get
+ *   e testar se para cada item que veio da lista o tokenPayLoad.autorities 
+ *   é igual a alguma das roles do nosso enum.
+ */
+export function hasAnyRoles(roles: RoleEnum[]): boolean {
+  if (roles.length === 0) {
+    return true;
+  }
+  const tokenPayload = getAccessTokenPayload();
+  if (tokenPayload !== undefined) {
+    for (var i = 0; i < roles.length; i++) {
+      if (tokenPayload.authorities.includes(roles[i])) {
+        return true;
+      }
+    }
+    //return roles.some(role => tokenData.authorities.includes(role));
   }
   return false;
 }
