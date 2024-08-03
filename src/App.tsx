@@ -27,6 +27,9 @@ function App() {
      *
      * - HistoryRouter: Trocamos nosso browseRouter pele HistoryRouter que nos dá a possibilidade
      *   de fazer redirecionamentos inclusive de módulos que não forem componentes react.
+     * 
+     * - PrivateRoute roles={['ROLE_ADMIN']: A rota admin só pode ser acessada por quem possui
+     *   o role admin.
      */
     <ContextCartCount.Provider
       value={{ contextCartCount, setContextCartCount }}
@@ -40,7 +43,7 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="login" element={<Login />} />
           </Route>
-          <Route path="/admin/"element={<PrivateRoute><Admin /></PrivateRoute>}>
+          <Route path="/admin/"element={<PrivateRoute roles={['ROLE_ADMIN']}><Admin /></PrivateRoute>}>
             <Route index element={<AdminHome />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
