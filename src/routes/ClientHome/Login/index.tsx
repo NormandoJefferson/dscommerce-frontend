@@ -1,9 +1,20 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./styles.css";
 import { CredentialsDTO } from "../../../models/auth";
 import * as authService from "../../../services/auth-services";
+import { useNavigate } from "react-router-dom";
+import { ContextToken } from "../../../utils/context-token";
 
 export default function Login() {
+
+  const { setContextTokenPayload } = useContext(ContextToken);
+
+  /**
+   * - useNavigate: Para quando clicarmos em logar redirecionar para a página 
+   *   de carrinho.
+   */
+  const navigate = useNavigate();
+
   /**
    * - useState do nosso objeto CredentialsDTO, que possui os dados do usuário.
    *   Ele inicia com string vazia.
@@ -18,6 +29,10 @@ export default function Login() {
    *   . Chamamos essa função passando o formeData que digitamos no input.
    *
    * - authService.saveAccessToken: Salva nosso token no localStorage.
+   * 
+   * - setContextTokenPayload: Seta o payload quando fazemos login.
+   * 
+   * - navigate("/cart"): Navega para o carrinho.
    */
   function handleSubmit(event: any) {
     event.preventDefault();
@@ -25,7 +40,8 @@ export default function Login() {
       .loginRequest(formData)
       .then((response) => {
         authService.saveAccessToken(response.data.access_token);
-        console.log(authService.getAccessTokenPayload());
+        setContextTokenPayload(authService.getAccessTokenPayload());
+        navigate("/cart")
       })
       .catch((error) => {
         console.log("Erro no login", error);
