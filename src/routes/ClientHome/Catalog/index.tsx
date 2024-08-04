@@ -41,11 +41,11 @@ export default function Catalog() {
    * - useEffect: Busca os objetos do backend para carregar a lista de produtos na página de catálogo.
    *
    * - findPageRequest: Recebe nosso tipo QueryParams (que é um useState).
-   * 
+   *
    * - const nextPage: Recebe os valores da página.
-   * 
+   *
    * - setProducts: Seta os valores sem excluír os que já existiam.
-   * 
+   *
    * - setIsLastPage: Seta os useState isLastPage para true quando for a última página,
    *   o response.data.last mostra quando chega na última página.
    *
@@ -58,8 +58,8 @@ export default function Catalog() {
     productService
       .findPageRequest(queryParams.page, queryParams.name)
       .then((response) => {
-        const nextPage = response.data.content;  
-        setProducts(products.concat(nextPage)); 
+        const nextPage = response.data.content;
+        setProducts(products.concat(nextPage));
         setIsLastPage(response.data.last);
       });
   }, [queryParams]);
@@ -94,20 +94,22 @@ export default function Catalog() {
     setqueryParams({ ...queryParams, page: queryParams.page + 1 });
   }
 
+  /**
+   * - handleSearch: Função passada como props.
+   *
+   * - products.map: Percorre a lista de produtos do backend e carrega um CatalogCard para cada produto.
+   *
+   * - isLastPage: Só renderiza o botão abaixo enquanto não for a última página
+   */
   return (
     <main>
       <section id="catalog-section" className="dsc-container">
-        {/* handleSearch: Função passada como props*/}
         <SearchBar onSearch={handleSearch} />
-
         <div className="dsc-catalog-cards dsc-mb20 dsc-mt20">
-          {/* Percorre a lista de produtos do backend e carrega um CatalogCard para cada produto. */}
           {products.map((product) => (
             <CatalogCard key={product.id} product={product} />
           ))}
         </div>
-
-        {/* Só renderiza o botão abaixo enquanto não for a última página. */}
         {!isLastPage && (
           <div onClick={handleNextPageClick}>
             <ButtonNextPage />
