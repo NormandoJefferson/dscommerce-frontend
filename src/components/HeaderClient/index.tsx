@@ -5,6 +5,7 @@ import iconAdmin from "../../assets/admin.svg";
 import * as authService from "../../services/auth-services";
 import { ContextToken } from "../../utils/context-token";
 import { useContext } from "react";
+import LoggedUser from "../LoggedUser";
 
 export default function HeaderClient() {
 
@@ -13,6 +14,10 @@ export default function HeaderClient() {
    */
   const { contextTokenPayload } = useContext(ContextToken);
 
+  /**
+   * - LoggedUser: Componente com botão sair e botão
+   *   entrar.
+   */
   return (
     <header className="dsc-header-client">
       <nav className="dsc-container">
@@ -34,7 +39,7 @@ export default function HeaderClient() {
               </div>
             </Link>
           </div>
-          <Link to="/login">Entrar</Link>
+          <LoggedUser />
         </div>
       </nav>
     </header>
