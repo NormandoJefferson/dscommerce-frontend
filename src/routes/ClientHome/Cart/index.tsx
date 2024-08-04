@@ -1,11 +1,18 @@
 import * as cartService from "../../../services/cart-service";
+import * as orderService from "../../../services/order-service";
 import "./styles.css";
 import { OrderDTO } from "../../../models/order";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ContextCartCount } from "../../../utils/context-cart";
 
 export default function Cart() {
+
+  /**
+   * - Usamos para navegar para página de confirmação na função handlePlaceOrderclick.
+   */
+  const navigate = useNavigate();
+
   const [cart, setCart] = useState<OrderDTO>(cartService.getCart());
 
   /**
@@ -14,13 +21,13 @@ export default function Cart() {
   const { setContextCartCount } = useContext(ContextCartCount);
 
   /**
-   * 
+   *
    * - cartService.clearCart: Limpa o carrinho.
-   * 
+   *
    * - const newCart: Guarda o carrinho nessa variável.
-   * 
+   *
    * - setCart: Seta o carrinho.
-   * 
+   *
    * - setContextCartCount: Seta o contexto global com a quantidade de itens do carrinho.
    */
   function handleClearClick() {
@@ -36,14 +43,14 @@ export default function Cart() {
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * - cartService.decreaseItem: Diminui a quantidade de itens do carrinho.
-   * 
+   *
    * - const newCart: Guarda o carrinho nessa variável.
-   * 
+   *
    * - setCart: Seta o carrinho.
-   * 
+   *
    * - setContextCartCount: Seta o contexto global com a quantidade de itens do carrinho.
    */
   function handleDecreaseItem(productId: number) {
@@ -51,6 +58,25 @@ export default function Cart() {
     const newCart = cartService.getCart();
     setCart(newCart);
     setContextCartCount(newCart.items.length);
+  }
+
+  /**
+   * - orderService.placeOrderRequest: Salva o carrinho no banco.
+   * 
+   * - cartService.clearCart(): Após salvar o pedido limpa o carrinho.
+   * 
+   * - setContextCartCount: Muda a quantidade de itens do carrinho para 0,
+   *   pois nós limpamos o carrinho.
+   * 
+   * - navigate: Navegamos para o Id que vem na resposta.
+   */
+  function handlePlaceOrderclick() {
+    orderService.placeOrderRequest(cart)
+    .then((response) => {
+      cartService.clearCart()
+      setContextCartCount(0)
+      navigate(`/confirmation/${response.data.id}`)
+    })
   }
 
   return (
@@ -102,7 +128,9 @@ export default function Cart() {
         )}
 
         <div className="dsc-btn-page-container">
-          <div className="dsc-btn dsc-btn-blue">Finalizar pedido</div>
+          <div onClick={handlePlaceOrderclick} className="dsc-btn dsc-btn-blue">
+            Finalizar pedido
+          </div>
           <Link to={"/catalog"}>
             <div className="dsc-btn dsc-btn-white">Continuar comprando</div>
           </Link>
