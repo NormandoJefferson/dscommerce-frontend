@@ -4,6 +4,8 @@ import editIcon from "../../../assets/edit.svg";
 import deleteIcon from "../../../assets/delete.svg";
 import { useEffect, useState } from "react";
 import { ProductDTO } from "../../../models/product";
+import SearchBar from "../../../components/SearchBar";
+import ButtonNextPage from "../../../components/ButtonNextPage";
 
 type QueryParams = {
   page: number;
@@ -46,9 +48,45 @@ export default function ProductListing() {
         setIsLastPage(response.data.last)
      })
   }, [queryParams])
+  
+  /**
+   * - Função: Essa função é passada para o componente filho searchBar para
+   *   quando clicarmos em buscar os parâmetros da busca do findPageRequest()
+   *   sejam preenchidos com os textos digitados.
+   *
+   * - setProducts([]): Sempre que mudarmos o texto de busca temos que zerar a lista de produtos,
+   *   pois ai será concatenado uma lista vazia com a nova busca no 'setProducts(products.concat(nextPage))'
+   *   do useEffect.
+   *
+   * - setqueryParams: Recebe o que tiver do queryParams e o que vier da busca do searchBar,
+   *   note que também colocamos a página para a 0.
+   *
+   *   OBS: Como usamos todos os parâmetros do QueryParams nem precisavamos da desestruturação,
+   *   porém vamos deixar apenas por manutenção, vai que no futuro queremos inserir mais valores.
+   */
+  function handleSearch(searchText: string) {
+    setProducts([]);
+    setqueryParams({ ...queryParams, page: 0, name: searchText });
+  }
+
+   /**
+   * - Função: Quando clicarmos em 'carregar mais' aparecere
+   *   os resultados da próxima página.
+   *
+   * - setqueryParams: Refaz a consulta com a página nova.
+   */
+   function handleNextPageClick() {
+    setqueryParams({ ...queryParams, page: queryParams.page + 1 });
+  }
 
     /**
+     * - SearchBar: Passa a função handleSearch como props para o filho e 
+     *   fica observando algo ser mandado do filho para disparar a função.
+     * 
      * - products.map: Renderiza os tr conforme os produtos.
+     * 
+     * - ButtonNextPage: Passa a função handleNextPageClick como props para o 
+     *   filho e fica observando o filho para disparar  função.
      */
     return(
         <main>
@@ -59,11 +97,7 @@ export default function ProductListing() {
             <div className="dsc-btn dsc-btn-white">Novo</div>
           </div>
   
-          <form className="dsc-search-bar">
-            <button type="submit">🔎︎</button>
-            <input type="text" placeholder="Nome do produto" />
-            <button type="reset">🗙</button>
-          </form>
+          <SearchBar onSearch={handleSearch}/>
   
           <table className="dsc-table dsc-mb20 dsc-mt20">
             <thead>
@@ -79,7 +113,7 @@ export default function ProductListing() {
             <tbody>
               {
                 products.map((product) => (
-                  <tr>
+                  <tr key={product.id}>
                     <td className="dsc-tb576">{product.id}</td>
                     <td><img className="dsc-product-listing-image" src={product.imgUrl} alt={product.name}/></td>
                     <td className="dsc-tb768">R$ {product.price.toFixed(2)}</td>
@@ -92,7 +126,11 @@ export default function ProductListing() {
             </tbody>
           </table>
   
-          <div className="dsc-btn-next-page">Carregar mais</div>
+          {!isLastPage && (
+          <div onClick={handleNextPageClick}>
+            <ButtonNextPage />
+          </div>
+        )}
         </section>
       </main>
     )
