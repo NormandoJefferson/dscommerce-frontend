@@ -2,10 +2,15 @@ import "./styles.css";
 import homeIcon from "../../assets/home.svg";
 import productsIcon from "../../assets/products.svg";
 import LoggedUser from "../LoggedUser";
+import { NavLink } from "react-router-dom";
 
 export default function HeaderAdmin() {
-
   /**
+   * - NavLink: Temos um NavLink para o botão Início e outro para o botão produtos.
+   *   No NavLink podemos usar o isActive.
+   *    .isActive: Se estiver ativo o estilo com negrito fica renderizado, se não
+   *               será renderizado sem estilo.
+   *
    * - LoggedUser: Componente com botão sair e botão
    *   entrar.
    */
@@ -15,16 +20,31 @@ export default function HeaderAdmin() {
         <h1>DSC Admin</h1>
         <div className="dsc-navbar-right">
           <div className="dsc-menu-items-container">
-            <div className="dsc-menu-item">
-              <img src={homeIcon} alt="Início" />
-              <p>Início</p>
-            </div>
-            <div className="dsc-menu-item">
-              <img src={productsIcon} alt="Cadastro de produtos" />
-              <p className="dsc-menu-item-active">Produtos</p>
-            </div>
+            <NavLink
+              to="/admin/home"
+              className={({ isActive }) =>
+                isActive ? "dsc-menu-item-active" : ""
+              }
+            >
+              <div className="dsc-menu-item">
+                <img src={homeIcon} alt="Início" />
+                <p>Início</p>
+              </div>
+            </NavLink>
+
+            <NavLink
+              to="/admin/products"
+              className={({ isActive }) =>
+                isActive ? "dsc-menu-item-active" : ""
+              }
+            >
+              <div className="dsc-menu-item">
+                <img src={productsIcon} alt="Cadastro de produtos" />
+                <p>Produtos</p>
+              </div>
+            </NavLink>
           </div>
-          <LoggedUser/>
+          <LoggedUser />
         </div>
       </nav>
     </header>

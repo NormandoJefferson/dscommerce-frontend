@@ -16,6 +16,8 @@ import { ContextToken } from "./utils/context-token";
 import * as authService from "./services/auth-services";
 import * as cartService from "./services/cart-service";
 import Confirmation from "./routes/ClientHome/Confirmation";
+import ProductListing from "./routes/Admin/AdminHome/ProductListing";
+import ProductForm from "./routes/Admin/AdminHome/ProductForm";
 
 function App() {
   /**
@@ -46,12 +48,22 @@ function App() {
   /**
   * - Envolvemos tudo com o nosso contexto global, agora podemos usar esse estado onde nós
   *   quisermos.
-  *
+  * 
+  * --------- History:
+  * 
   * - HistoryRouter: Trocamos nosso browseRouter pele HistoryRouter que nos dá a possibilidade
   *   de fazer redirecionamentos inclusive de módulos que não forem componentes react.
   * 
-  * - PrivateRoute roles={['ROLE_ADMIN']: A rota admin só pode ser acessada por quem possui
-  *   o role admin.
+  * --------- Rotas:
+  * 
+  * - path="*" element={<Navigate to="/" />}: Redireciona qualquer rota que não exista para
+  *   Catalog, já que o index do "/" é o Catalog.
+  *
+  * - /admin/:
+  *    .PrivateRoute roles={['ROLE_ADMIN']: A rota admin só pode ser acessada por quem possui
+  *     o role admin.
+  *    .Todas as rotas dentro de admin (os outlets) também ficam protegidas apenas para role_admin.
+  *    .index element={<Navigate to="/admin/home" />}: Se digitarmos apenas /admin será redirecionado para /admin/home.
   */
   return (
     <ContextToken.Provider value={{ contextTokenPayload, setContextTokenPayload }}>
@@ -66,8 +78,11 @@ function App() {
               <Route path="login" element={<Login />} />
               <Route path="confirmation/:orderId"element={<PrivateRoute><Confirmation /></PrivateRoute>}/>
             </Route>
-            <Route path="/admin/"element={<PrivateRoute roles={['ROLE_ADMIN']}><Admin /></PrivateRoute>}>
-              <Route index element={<AdminHome />} />
+            <Route path="/admin/" element={<PrivateRoute roles={['ROLE_ADMIN']}><Admin /></PrivateRoute>}>
+              <Route index element={<Navigate to="/admin/home" />} />
+              <Route path="home" element={<AdminHome />} />
+              <Route path="products" element={<ProductListing />} />
+              <Route path="products/:productId" element={<ProductForm />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
