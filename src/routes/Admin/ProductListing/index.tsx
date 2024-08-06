@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ProductDTO } from "../../../models/product";
 import SearchBar from "../../../components/SearchBar";
 import ButtonNextPage from "../../../components/ButtonNextPage";
+import DialogInfo from "../../../components/DialogInfo";
 
 type QueryParams = {
   page: number;
@@ -13,6 +14,14 @@ type QueryParams = {
 }
 
 export default function ProductListing() {
+
+  /**
+   * useState: Para manter os dados da janela.
+   */
+  const [dialogInfoData, setDialogInfoData] = useState({
+    visible: false,
+    message: "Operação com sucesso!"
+  });
 
    /**
    * - useState: Possui todos os parâmetros da busca do findPageRequest().
@@ -79,6 +88,26 @@ export default function ProductListing() {
     setqueryParams({ ...queryParams, page: queryParams.page + 1 });
   }
 
+  /**
+   * - handleDialogInfoClose: Função para fechar o modal.
+   * 
+   * - setDialogInfoData: Aproveita o que tem no dialogInfoData
+   *   e seta o visible para false.
+   */
+  function handleDialogInfoClose() {
+    setDialogInfoData({...dialogInfoData, visible: false})
+  }
+
+  /**
+   * - handleDeleteClick: Quando clicamos em delete deve ser mostrado o modal.
+   * 
+   * - setDialogInfoData: Aproveita o que tem no dialogInfoData
+   *   e seta o visible para true.
+   */
+  function handleDeleteClick() {
+    setDialogInfoData({...dialogInfoData, visible: true})
+  }
+
     /**
      * - SearchBar: Passa a função handleSearch como props para o filho e 
      *   fica observando algo ser mandado do filho para disparar a função.
@@ -87,6 +116,9 @@ export default function ProductListing() {
      * 
      * - ButtonNextPage: Passa a função handleNextPageClick como props para o 
      *   filho e fica observando o filho para disparar  função.
+     * 
+     * - DialogInfo: Nosso componente de dialog modal. Só é visivel quando 
+     *   o useState visible é true.
      */
     return(
         <main>
@@ -119,7 +151,7 @@ export default function ProductListing() {
                     <td className="dsc-tb768">R$ {product.price.toFixed(2)}</td>
                     <td className="dsc-txt-left">{product.name}</td>
                     <td><img className="dsc-product-listing-btn" src={editIcon} alt="Editar"/></td>
-                    <td><img className="dsc-product-listing-btn" src={deleteIcon} alt="Deletar"/></td>
+                    <td><img onClick={handleDeleteClick} className="dsc-product-listing-btn" src={deleteIcon} alt="Deletar"/></td>
                 </tr>
                 ))
               }
@@ -132,6 +164,12 @@ export default function ProductListing() {
           </div>
         )}
         </section>
+        {
+          dialogInfoData.visible &&
+          <DialogInfo 
+          message={dialogInfoData.message} 
+          onDialogClose={handleDialogInfoClose}/>
+        }
       </main>
     )
 }
