@@ -1,5 +1,5 @@
 import "./styles.css";
-import * as productService from "../../../services/product-service"
+import * as productService from "../../../services/product-service";
 import editIcon from "../../../assets/edit.svg";
 import deleteIcon from "../../../assets/delete.svg";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import DialogConfirmation from "../../../components/DialogConfirmation";
 type QueryParams = {
   page: number;
   name: string;
-}
+};
 
 export default function ProductListing() {
 
@@ -29,23 +29,24 @@ export default function ProductListing() {
   });
 
 
-   /**
-   * useState: Para manter os dados da janela que escolhemos sim o não.
-   * 
-   * - visible: Exibe a caixa de diálogo.
-   * 
-   * - message: Mensagem da caixa de diálogo.
-   */
-   const [dialogConfirmationData, setDialogConfirmationData] = useState({
-    visible: false,
-    message: "Tem certeza?"
+  /**
+  * useState: Para manter os dados da janela que escolhemos sim o não.
+  * 
+  * - visible: Exibe a caixa de diálogo.
+  * 
+  * - message: Mensagem da caixa de diálogo.
+  */
+  const [dialogConfirmationData, setDialogConfirmationData] = useState({
+    id: 0,
+    message: "Tem certeza?",
+    visible: false
   });
 
-   /**
-   * - useState: Possui todos os parâmetros da busca do findPageRequest().
-   *
-   * - Definimos um objeto com os valores default para valor inicial do useState.
-   */
+  /**
+  * - useState: Possui todos os parâmetros da busca do findPageRequest().
+  *
+  * - Definimos um objeto com os valores default para valor inicial do useState.
+  */
   const [queryParams, setqueryParams] = useState<QueryParams>({
     page: 0,
     name: "",
@@ -69,13 +70,13 @@ export default function ProductListing() {
    */
   useEffect(() => {
     productService.findPageRequest(queryParams.page, queryParams.name)
-     .then((response) => {
+      .then((response) => {
         const nextPage = response.data.content;
-        setProducts(products.concat(nextPage))
-        setIsLastPage(response.data.last)
-     })
-  }, [queryParams])
-  
+        setProducts(products.concat(nextPage));
+        setIsLastPage(response.data.last);
+      })
+  }, [queryParams]);
+
   /**
    * - Função: Essa função é passada para o componente filho searchBar para
    *   quando clicarmos em buscar os parâmetros da busca do findPageRequest()
@@ -96,13 +97,13 @@ export default function ProductListing() {
     setqueryParams({ ...queryParams, page: 0, name: searchText });
   }
 
-   /**
-   * - Função: Quando clicarmos em 'carregar mais' aparecere
-   *   os resultados da próxima página.
-   *
-   * - setqueryParams: Refaz a consulta com a página nova.
-   */
-   function handleNextPageClick() {
+  /**
+  * - Função: Quando clicarmos em 'carregar mais' aparecere
+  *   os resultados da próxima página.
+  *
+  * - setqueryParams: Refaz a consulta com a página nova.
+  */
+  function handleNextPageClick() {
     setqueryParams({ ...queryParams, page: queryParams.page + 1 });
   }
 
@@ -113,16 +114,31 @@ export default function ProductListing() {
    *   e seta o visible para false.
    */
   function handleDialogInfoClose() {
-    setDialogInfoData({...dialogInfoData, visible: false})
+    setDialogInfoData({ ...dialogInfoData, visible: false })
   }
 
   /**
+   * 
+   * - Se o answer for verdadeiro:
+   *    .deleteById: Deleta um produto e seta os produtos para lista vazia depois seta a página
+   *                 para a 0. Como o queryParams está sendo observado no useEffect será 
+   *                 refeita a busca e virá sem nosso produto, pois ele foi apagado do banco.
+   * 
    * - setDialogConfirmationData: Após confirmarmos temos que ocultar a janela,
    *   então passamos ele para false.
    */
-  function handleDialogConfirmationAnswer(answer: boolean) {
-    console.log(answer)
-    setDialogConfirmationData({...dialogConfirmationData, visible: false})
+  function handleDialogConfirmationAnswer(answer: boolean, productId: number) {
+    if (answer) {
+      productService.deleteById(productId)
+        .then(() => {
+          setProducts([]);
+          setqueryParams({ ...queryParams, page: 0 })
+        })
+        .catch(error => {
+          setDialogInfoData({ visible: true, message: error.response.data.error });
+        });
+    }
+    setDialogConfirmationData({ ...dialogConfirmationData, visible: false });
   }
 
   /**
@@ -130,83 +146,90 @@ export default function ProductListing() {
    *   para confirmarmos sim ou não.
    * 
    * - setDialogConfirmationData: Aproveita o que tem no dialogConfirmationData
-   *   e seta o visible para true.
+   *   e seta o visible para true e passa o id do produto.
    */
-  function handleDeleteClick() {
-    setDialogConfirmationData({...dialogConfirmationData, visible: true})
+  function handleDeleteClick(productId: number) {
+    setDialogConfirmationData({ ...dialogConfirmationData, id: productId, visible: true })
   }
 
-    /**
-     * - SearchBar: Passa a função handleSearch como props para o filho e 
-     *   fica observando algo ser mandado do filho para disparar a função.
-     * 
-     * - products.map: Renderiza os tr conforme os produtos.
-     * 
-     * - ButtonNextPage: Passa a função handleNextPageClick como props para o 
-     *   filho e fica observando o filho para disparar  função.
-     * 
-     * - DialogInfo: Nosso componente de dialog modal. Só é visivel quando 
-     *   o useState visible é true.
-     * 
-     * - DialogConfirmation: Nosso componente com dialoga modal no qual podemos
-     *   escolher sim o  não.
-     */
-    return(
-        <main>
-        <section id="product-listing-section" className="dsc-container">
-          <h2 className="dsc-section-title dsc-mb20">Cadastro de produtos</h2>
-  
-          <div className="dsc-btn-page-container dsc-mb20">
-            <div className="dsc-btn dsc-btn-white">Novo</div>
-          </div>
-  
-          <SearchBar onSearch={handleSearch}/>
-  
-          <table className="dsc-table dsc-mb20 dsc-mt20">
-            <thead>
-              <tr>
-                <th className="dsc-tb576">ID</th>
-                <th></th>
-                <th className="dsc-tb768">Preço</th>
-                <th className="dsc-txt-left">Nome</th>
-                <th></th>
-                <th></th>  
-              </tr>
-            </thead>
-            <tbody>
-              {
-                products.map((product) => (
-                  <tr key={product.id}>
-                    <td className="dsc-tb576">{product.id}</td>
-                    <td><img className="dsc-product-listing-image" src={product.imgUrl} alt={product.name}/></td>
-                    <td className="dsc-tb768">R$ {product.price.toFixed(2)}</td>
-                    <td className="dsc-txt-left">{product.name}</td>
-                    <td><img className="dsc-product-listing-btn" src={editIcon} alt="Editar"/></td>
-                    <td><img onClick={handleDeleteClick} className="dsc-product-listing-btn" src={deleteIcon} alt="Deletar"/></td>
+  /**
+   * - SearchBar: Passa a função handleSearch como props para o filho e 
+   *   fica observando algo ser mandado do filho para disparar a função.
+   * 
+   * - products.map: Renderiza os tr conforme os produtos. No handleDeleteClick
+   *   passamos também o id do produto.
+   * 
+   * - Maçete: () => handleDeleteClick(product.id): Usamos a notação do função pois 
+   *   iria dar erro se fosso apenas o handleDeleteClick.
+   * 
+   * - ButtonNextPage: Passa a função handleNextPageClick como props para o 
+   *   filho e fica observando o filho para disparar  função.
+   * 
+   * - DialogInfo: Nosso componente de dialog modal. Só é visivel quando 
+   *   o useState visible é true.
+   * 
+   * - DialogConfirmation: Nosso componente com dialoga modal no qual podemos
+   *   escolher sim o  não.
+   */
+  return (
+    <main>
+      <section id="product-listing-section" className="dsc-container">
+        <h2 className="dsc-section-title dsc-mb20">Cadastro de produtos</h2>
+
+        <div className="dsc-btn-page-container dsc-mb20">
+          <div className="dsc-btn dsc-btn-white">Novo</div>
+        </div>
+
+        <SearchBar onSearch={handleSearch} />
+
+        <table className="dsc-table dsc-mb20 dsc-mt20">
+          <thead>
+            <tr>
+              <th className="dsc-tb576">ID</th>
+              <th></th>
+              <th className="dsc-tb768">Preço</th>
+              <th className="dsc-txt-left">Nome</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {
+              products.map((product) => (
+                <tr key={product.id}>
+                  <td className="dsc-tb576">{product.id}</td>
+                  <td><img className="dsc-product-listing-image" src={product.imgUrl} alt={product.name} /></td>
+                  <td className="dsc-tb768">R$ {product.price.toFixed(2)}</td>
+                  <td className="dsc-txt-left">{product.name}</td>
+                  <td><img className="dsc-product-listing-btn" src={editIcon} alt="Editar" /></td>
+                  <td><img onClick={() => handleDeleteClick(product.id)} className="dsc-product-listing-btn" src={deleteIcon} alt="Deletar" /></td>
                 </tr>
-                ))
-              }
-            </tbody>
-          </table>
-  
-          {!isLastPage && (
+              ))
+            }
+          </tbody>
+        </table>
+
+        {!isLastPage && (
           <div onClick={handleNextPageClick}>
             <ButtonNextPage />
           </div>
         )}
-        </section>
-        {
-          dialogInfoData.visible &&
-          <DialogInfo 
-          message={dialogInfoData.message} 
-          onDialogClose={handleDialogInfoClose}/>
-        }
-         {
-          dialogConfirmationData.visible &&
-          <DialogConfirmation
-          message={dialogConfirmationData.message} 
-          onDialogAnswer={handleDialogConfirmationAnswer}/>
-        }
-      </main>
-    )
+      </section>
+      {
+        dialogInfoData.visible &&
+        <DialogInfo
+          message={dialogInfoData.message}
+          onDialogClose={handleDialogInfoClose} />
+      }
+
+      {
+        dialogConfirmationData.visible &&
+        <DialogConfirmation
+          id={dialogConfirmationData.id}
+          message={dialogConfirmationData.message}
+          onDialogAnswer={handleDialogConfirmationAnswer} />
+      }
+    </main>
+  );
 }

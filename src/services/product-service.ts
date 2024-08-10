@@ -23,3 +23,17 @@ export function findPageRequest(
 export function findById(id: number) {
   return requestBackend({ url: `/products/${id}` });
 }
+
+/**
+ * - Recebe o id do produto que será deletado.
+ * 
+ * - Para deletar é necessário ter credenciais.
+ */
+export function deleteById(id: number) {
+  const config: AxiosRequestConfig = {
+    method: "DELETE",
+    url: `/products/${id}`,
+    withCredentials: true
+  };
+  return requestBackend(config);
+}
