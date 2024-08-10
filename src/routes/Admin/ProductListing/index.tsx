@@ -7,6 +7,7 @@ import { ProductDTO } from "../../../models/product";
 import SearchBar from "../../../components/SearchBar";
 import ButtonNextPage from "../../../components/ButtonNextPage";
 import DialogInfo from "../../../components/DialogInfo";
+import DialogConfirmation from "../../../components/DialogConfirmation";
 
 type QueryParams = {
   page: number;
@@ -17,10 +18,27 @@ export default function ProductListing() {
 
   /**
    * useState: Para manter os dados da janela.
+   *
+   *  - visible: Exibe a caixa de diálogo.
+   * 
+   * - message: Mensagem da caixa de diálogo.
    */
   const [dialogInfoData, setDialogInfoData] = useState({
     visible: false,
     message: "Operação com sucesso!"
+  });
+
+
+   /**
+   * useState: Para manter os dados da janela que escolhemos sim o não.
+   * 
+   * - visible: Exibe a caixa de diálogo.
+   * 
+   * - message: Mensagem da caixa de diálogo.
+   */
+   const [dialogConfirmationData, setDialogConfirmationData] = useState({
+    visible: false,
+    message: "Tem certeza?"
   });
 
    /**
@@ -99,13 +117,23 @@ export default function ProductListing() {
   }
 
   /**
-   * - handleDeleteClick: Quando clicamos em delete deve ser mostrado o modal.
+   * - setDialogConfirmationData: Após confirmarmos temos que ocultar a janela,
+   *   então passamos ele para false.
+   */
+  function handleDialogConfirmationAnswer(answer: boolean) {
+    console.log(answer)
+    setDialogConfirmationData({...dialogConfirmationData, visible: false})
+  }
+
+  /**
+   * - handleDeleteClick: Quando clicamos em delete deve ser mostrado o modal
+   *   para confirmarmos sim ou não.
    * 
-   * - setDialogInfoData: Aproveita o que tem no dialogInfoData
+   * - setDialogConfirmationData: Aproveita o que tem no dialogConfirmationData
    *   e seta o visible para true.
    */
   function handleDeleteClick() {
-    setDialogInfoData({...dialogInfoData, visible: true})
+    setDialogConfirmationData({...dialogConfirmationData, visible: true})
   }
 
     /**
@@ -119,6 +147,9 @@ export default function ProductListing() {
      * 
      * - DialogInfo: Nosso componente de dialog modal. Só é visivel quando 
      *   o useState visible é true.
+     * 
+     * - DialogConfirmation: Nosso componente com dialoga modal no qual podemos
+     *   escolher sim o  não.
      */
     return(
         <main>
@@ -169,6 +200,12 @@ export default function ProductListing() {
           <DialogInfo 
           message={dialogInfoData.message} 
           onDialogClose={handleDialogInfoClose}/>
+        }
+         {
+          dialogConfirmationData.visible &&
+          <DialogConfirmation
+          message={dialogConfirmationData.message} 
+          onDialogAnswer={handleDialogConfirmationAnswer}/>
         }
       </main>
     )
