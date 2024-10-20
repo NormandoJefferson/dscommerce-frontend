@@ -9,23 +9,17 @@ import LoggedUser from "../LoggedUser";
 
 export default function HeaderClient() {
 
-  /**
-   * - useContext para observar se existe token no localStorage.
-   */
   const { contextTokenPayload } = useContext(ContextToken);
 
-  /**
-   * - LoggedUser: Componente com botão sair e botão
-   *   entrar.
-   */
   return (
     <header className="dsc-header-client">
       <nav className="dsc-container">
         <Link to="/">
           <h1>DSCommerce</h1>
         </Link>
+
         <div className="dsc-navbar-right">
-          <div className="dsc-menu-items-container"> 
+          <div className="dsc-menu-items-container">
             {contextTokenPayload && authService.hasAnyRoles(["ROLE_ADMIN"]) && (
               <Link to="/admin">
                 <div className="dsc-menu-item">
@@ -33,12 +27,14 @@ export default function HeaderClient() {
                 </div>
               </Link>
             )}
+
             <Link to="/cart">
               <div className="dsc-menu-item">
                 <CartIcon />
               </div>
             </Link>
           </div>
+
           <LoggedUser />
         </div>
       </nav>
