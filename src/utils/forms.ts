@@ -15,13 +15,13 @@ export function updateAll(inputs: any, newValues: any) {
     for (const name in inputs) {
         newInputs[name] = { ...inputs[name], value: newValues[name] }
     }
-    return newInputs;3
+    return newInputs; 3
 }
 
 export function validate(inputs: any, name: string) {
-    if (!inputs[name].validate) {
+    if (!inputs[name].validation) {
         return inputs;
     }
-    const isInValid = !inputs[name].validation(inputs[name].value);
-    return { ...inputs, [name]: { ...inputs[name], invalid: isInValid.toString() } }
+    const isInvalid = !inputs[name].validation(inputs[name].value);
+    return { ...inputs, [name]: { ...inputs[name], invalid: isInvalid.toString() } }
 }
