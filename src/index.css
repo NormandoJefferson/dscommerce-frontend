@@ -248,7 +248,7 @@ nav a {
   border: 1px solid var(--dsc-color-error);
 }
 
-.dsc-form-control[data-invalid="true"][data-dirty="true"] ~ div {
+.dsc-form-control[data-invalid="true"][data-dirty="true"]~div {
   display: unset;
 }
 
@@ -259,22 +259,15 @@ nav a {
   display: none;
 }
 
-.dsc-select:invalid {
-  color: var(--dsc-color-font-placeholder);
-}
-
-.dsc-select option[disabled] {
-  display: none;
-}
-
-.dsc-select option {
-  color: var(--dsc-color-font-primary);
-}
-
 .dsc-textarea {
   resize: none;
   height: 128px;
   padding-top: 10px;
+}
+
+.dsc-form-select-container {
+  padding: unset;
+  height: unset;
 }
 
 @media (min-width: 576px) {
